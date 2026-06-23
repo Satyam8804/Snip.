@@ -35,7 +35,7 @@ export const shortenUrl = async (req, res) => {
     await Url.create({
       code,
       longUrl: url,
-      userId: req.user?.id || null,
+      userId: req.user?.id,
       expiresAt,
     });
 
