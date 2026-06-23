@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../store/hook";
 import { useEffect, useRef, useState } from "react";
 import { logout } from "../api/authApi";
 import { logout as logoutAction } from "../store/slice/authSlice";
+import { House, Info, Mail } from "lucide-react";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
@@ -47,25 +48,47 @@ const Header = () => {
         </span>
       </NavLink>
 
-      {/* Nav */}
-      <nav className="flex items-center gap-8">
+      {/* Nav — replace the existing <nav> entirely */}
+      <nav
+          className="
+          fixed md:relative
+          bottom-4 md:bottom-auto
+          left-1/2 md:left-auto
+          -translate-x-1/2 md:translate-x-0
+          z-50
+          flex items-center gap-1.5
+          bg-[#141414]/90 md:bg-[#141414]
+          border border-[#222]
+          backdrop-blur-xl md:backdrop-blur-none
+          rounded-full md:rounded-[10px]
+          px-2 py-1.5 md:py-1
+          shadow-2xl md:shadow-none
+        "
+      >
         {[
-          { to: "/", label: "Home" },
-          { to: "/about", label: "About" },
-          { to: "/contact", label: "Contact" },
-        ].map(({ to, label }) => (
+          { to: "/", label: "Home", icon: <House size={16} /> },
+          { to: "/about", label: "About", icon: <Info size={16} /> },
+          { to: "/contact", label: "Contact", icon: <Mail size={16} /> },
+        ].map(({ to, label, icon }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
-              `text-sm font-medium px-2.5 py-1 rounded-md transition-colors ${
-                isActive
-                  ? "text-white bg-[#1a1a1a]"
-                  : "text-[#888] hover:text-white hover:bg-[#1a1a1a]"
-              }`
+              `flex items-center gap-1.5 transition-all duration-150 font-medium
+         h-10 md:h-[34px]
+         px-4 md:px-3.5
+         rounded-full md:rounded-[7px]
+         text-[12px]
+         ${
+           isActive
+             ? "bg-white text-[#0f0f0f]"
+             : "text-[#666] hover:text-white hover:bg-[#1c1c1c]"
+         }`
             }
           >
-            {label}
+            {icon}
+            {/* Hide label on very small screens if you prefer icon-only: add `hidden xs:inline` */}
+            <span>{label}</span>
           </NavLink>
         ))}
       </nav>

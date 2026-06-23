@@ -25,41 +25,37 @@ const STATS = [
   { val: "302", label: "redirect type" },
 ];
 
+const isValidUrl = (value: string): boolean => {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
 const Hero = () => {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
 
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
-  const [error, setError] = useState("");
-
-  const isValidUrl = (value: string): boolean => {
-    try {
-      const parsed = new URL(value);
-      return parsed.protocol === "http:" || parsed.protocol === "https:";
-    } catch {
-      return false;
-    }
-  };
 
   const handleShorten = async () => {
     if (!url) return;
-
-    // ✅ Validation
     if (!isValidUrl(url)) {
       setError("Please enter a valid URL (e.g. https://google.com)");
       return;
     }
-
-    setError(""); // clear previous error
+    setError("");
     try {
       setLoading(true);
       const res = await api.post("/shorten", { url });
       setShortUrl(res.data.data.shortUrl);
-    } catch (error) {
-      console.error(error);
+    } catch {
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -80,17 +76,26 @@ const Hero = () => {
 
       <div className="relative z-10 w-full max-w-2xl">
         {/* Badge */}
-        <div className="inline-flex items-center gap-1.5 bg-gray-100 border border-gray-200 rounded-full px-3 py-1 text-[11px] text-gray-500 mb-6">
+        <div
+          className="inline-flex items-center gap-1.5 bg-gray-100 border border-gray-200 rounded-full px-3 py-1 text-[11px] text-gray-500 mb-6"
+          style={{ animation: "fadeUp 0.4s forwards", opacity: 0 }}
+        >
           <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
           Fast, free URL shortener
         </div>
 
         {/* Headline */}
-        <h1 className="text-5xl sm:text-6xl font-medium text-gray-900 tracking-tight leading-tight mb-4">
+        <h1
+          className="text-5xl sm:text-6xl font-medium text-gray-900 tracking-tight leading-tight mb-4"
+          style={{ animation: "fadeUp 0.4s 0.08s forwards", opacity: 0 }}
+        >
           Long links, <span className="text-gray-300">made</span> short.
         </h1>
 
-        <p className="text-[15px] text-gray-500 max-w-sm mx-auto mb-8 leading-relaxed">
+        <p
+          className="text-[15px] text-gray-500 max-w-sm mx-auto mb-8 leading-relaxed"
+          style={{ animation: "fadeUp 0.4s 0.16s forwards", opacity: 0 }}
+        >
           Paste your URL and get a short shareable link instantly. Track clicks
           and analytics for every link.
         </p>
@@ -99,11 +104,11 @@ const Hero = () => {
         <div className="flex flex-col gap-1.5 mb-8">
           {EXAMPLES.map((ex, i) => (
             <div
-              key={i}
-              className="flex items-center justify-center gap-2 opacity-0 "
+              key={ex.short}
+              className="flex items-center justify-center gap-2"
               style={{
-                animation: `fadeIn 0.4s forwards`,
-                animationDelay: `${i * 0.15}s`,
+                animation: "fadeUp 0.4s forwards",
+                animationDelay: `${0.24 + i * 0.1}s`,
                 opacity: 0,
               }}
             >
@@ -118,36 +123,40 @@ const Hero = () => {
           ))}
         </div>
 
-        {/* Input box */}
-        <div className="flex gap-2 bg-gray-100 border border-gray-200 rounded-xl p-1.5 mb-3">
-          <input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleShorten()}
-            placeholder="Paste your long URL here..."
-            className="flex-1 h-9 px-3 bg-transparent text-[13px] text-gray-900 placeholder:text-gray-400 outline-none"
-          />
-          <button
-            onClick={handleShorten}
-            disabled={loading}
-            className="h-9 px-5 bg-gray-900 text-white text-[13px] font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
-          >
-            {loading ? "Shortening..." : "Shorten →"}
-          </button>
-        </div>
+        {/* Input */}
+        <div style={{ animation: "fadeUp 0.4s 0.54s forwards", opacity: 0 }}>
+          <div className="flex gap-2 bg-gray-100 border border-gray-200 rounded-xl p-1.5 mb-2">
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => {
+                setUrl(e.target.value);
+                if (error) setError("");
+              }}
+              onKeyDown={(e) => e.key === "Enter" && handleShorten()}
+              placeholder="Paste your long URL here..."
+              className="flex-1 h-9 px-3 bg-transparent text-[13px] text-gray-900 placeholder:text-gray-400 outline-none"
+            />
+            <button
+              onClick={handleShorten}
+              disabled={loading}
+              className="h-9 px-5 bg-gray-900 text-white text-[13px] font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
+            >
+              {loading ? "Shortening..." : "Shorten →"}
+            </button>
+          </div>
 
-        {/* Error message */}
-        {error && (
-          <p className="text-[12px] text-red-500 text-left px-1 mb-2">
-            ⚠️ {error}
-          </p>
-        )}
+          {/* Error */}
+          {error && (
+            <p className="text-[12px] text-red-500 text-left px-1 mb-2">
+              ⚠️ {error}
+            </p>
+          )}
+        </div>
 
         {/* Result */}
         {shortUrl && (
-          <div className="flex flex-col gap-2">
-            {/* Short URL */}
+          <div className="flex flex-col gap-2 mt-1">
             <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-2.5">
               <span className="text-[13px] text-green-700 font-mono truncate mr-3">
                 {shortUrl}
@@ -160,7 +169,6 @@ const Hero = () => {
               </button>
             </div>
 
-            {/* Hint — sirf guests ko */}
             {!isAuthenticated && (
               <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5">
                 <div className="flex items-center gap-2">
@@ -179,7 +187,6 @@ const Hero = () => {
               </div>
             )}
 
-            {/* Dashboard link — logged in users ko */}
             {isAuthenticated && (
               <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5">
                 <div className="flex items-center gap-2">
@@ -200,12 +207,17 @@ const Hero = () => {
           </div>
         )}
 
-        {/* Stats row */}
-        <div className="flex items-center justify-center gap-8 mt-12 pt-8 border-t border-gray-100">
+        {/* Stats */}
+        <div
+          className="flex items-center justify-center gap-8 mt-12 pt-8 border-t border-gray-100"
+          style={{ animation: "fadeUp 0.4s 0.6s forwards", opacity: 0 }}
+        >
           {STATS.map((s, i) => (
-            <div key={s.val} className="flex items-center gap-8">
-              {i > 0 && <div className="w-px h-7 bg-gray-100" />}
-              <div className="text-center">
+            <>
+              {i > 0 && (
+                <div key={`divider-${i}`} className="w-px h-7 bg-gray-100" />
+              )}
+              <div key={s.val} className="text-center">
                 <div className="text-xl font-medium text-gray-900 tracking-tight font-mono">
                   {s.val}
                 </div>
@@ -213,7 +225,7 @@ const Hero = () => {
                   {s.label}
                 </div>
               </div>
-            </div>
+            </>
           ))}
         </div>
       </div>
