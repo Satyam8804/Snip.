@@ -30,13 +30,12 @@ export const shortenUrl = async (req, res) => {
 
     const code = await generateUniqueCode();
 
-    const userId = req?.user?.id ?? null;
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
     await Url.create({
       code,
       longUrl: url,
-      userId: userId,
+      userId: req.user?.id || null,
       expiresAt,
     });
 
