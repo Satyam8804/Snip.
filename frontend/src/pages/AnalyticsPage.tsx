@@ -38,14 +38,14 @@ const AnalyticsPage = () => {
       year: "numeric",
     });
 
-  const formatDateTime = (date: string) =>
-    new Date(date).toLocaleString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  // const formatDateTime = (date: string) =>
+  //   new Date(date).toLocaleString("en-IN", {
+  //     day: "numeric",
+  //     month: "short",
+  //     year: "numeric",
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //   });
 
   const isExpired = (expiresAt: string | null) => {
     if (!expiresAt) return false;
