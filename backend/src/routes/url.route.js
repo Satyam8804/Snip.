@@ -6,11 +6,11 @@ import {
 } from "../controllers/url.controller.js";
 
 import { Router } from "express";
-import protect from "../middlewares/auth.middleware.js";
+import { optionalProtect, protect } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.post("/shorten", shortenUrl);
+router.post("/shorten", optionalProtect, shortenUrl);
 
 router.get("/urls", protect, getAllUrls);
 
