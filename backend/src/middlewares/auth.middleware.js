@@ -28,6 +28,8 @@ const protect = async (req, res, next) => {
   }
 };
 
+export default protect;
+
 export const optionalProtect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -43,4 +45,3 @@ export const optionalProtect = async (req, res, next) => {
   }
   next();
 };
-
