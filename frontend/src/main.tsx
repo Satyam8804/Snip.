@@ -15,6 +15,9 @@ import App from "./App.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import AnalyticsPage from "./pages/AnalyticsPage.tsx";
+import { registerSW } from "virtual:pwa-register";
+
+registerSW({ immediate: true });
 
 const AppRouter = createBrowserRouter([
   {
