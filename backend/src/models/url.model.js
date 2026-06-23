@@ -17,7 +17,6 @@ const UrlSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: false,
     },
     clicks: {
       type: Number,
@@ -33,14 +32,14 @@ const UrlSchema = new mongoose.Schema(
         ip: { type: String },
       },
     ],
-    expiresAt:{
-        type:Date,
-        default:null,
+    expiresAt: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }
 );
 
-UrlSchema.index({expiresAt:1},{expireAfterSeconds:0,sparse:true});
+UrlSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0, sparse: true });
 
 export const Url = mongoose.model("Url", UrlSchema);
