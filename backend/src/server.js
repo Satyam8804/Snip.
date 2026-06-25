@@ -6,6 +6,7 @@ import urlRouter from "./routes/url.route.js";
 import redirectRouter from "./routes/redirect.route.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import https from 'https';
 
 dotenv.config();
 
@@ -34,3 +35,17 @@ app.use("", redirectRouter);
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
 });
+
+
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+});
+
+
+setInterval(() => {
+    https.get('https://snip-n2qr.onrender.com/health', (res) => {
+        console.log(`Keep alive: ${res.statusCode}`);
+    }).on('error', (err) => {
+        console.error('Keep alive failed:', err.message);
+    });
+}, 14 * 60 * 1000);
