@@ -19,7 +19,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-app.options("*", cors(corsOptions));
+app.options("/{*path}", cors(corsOptions));
 
 app.use(cors(corsOptions));
 
@@ -37,12 +37,12 @@ app.use("/api/auth", userRouter);
 app.use("/api", urlRouter);
 app.use("", redirectRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
-});
-
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on ${PORT}`);
 });
 
 setInterval(() => {
