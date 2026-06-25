@@ -47,7 +47,7 @@ app.listen(PORT, () => {
 
 setInterval(() => {
   https
-    .get("https://snip-n2qr.onrender.com/health", (res) => {
+    .get(`${process.env.BASE_URL}/health`, (res) => {
       console.log(`Keep alive: ${res.statusCode}`);
     })
     .on("error", (err) => {
