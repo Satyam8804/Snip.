@@ -12,16 +12,16 @@ dotenv.config();
 
 const app = express();
 
-const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-app.options("/{*path}", cors(corsOptions));
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+app.use((req, res, next) => {
+  console.log(req.method, req.url);
+  next();
+});
 
 app.use(express.json());
 app.use(cookieParser());
@@ -37,7 +37,7 @@ app.use("/api/auth", userRouter);
 app.use("/api", urlRouter);
 app.use("", redirectRouter);
 
-app.get("/health", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
 

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate ,Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import type { Url } from "../types";
+import { Copy, Check, Trash2, BarChart2, Plus, Link2 } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -10,8 +11,8 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalLinks, setTotalLinks] = useState(0);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
-  // Helper functions
   const isExpired = (expiresAt: string | null) => {
     if (!expiresAt) return false;
     return new Date(expiresAt) < new Date();
@@ -27,7 +28,6 @@ const Dashboard = () => {
   const activeLinks = urls.filter((u) => !isExpired(u.expiresAt)).length;
   const totalClicks = urls.reduce((acc, url) => acc + url.clicks, 0);
 
-  // Fetch
   const fetchUrls = async (page = 1) => {
     try {
       setLoading(true);
@@ -46,7 +46,6 @@ const Dashboard = () => {
     fetchUrls(currentPage);
   }, [currentPage]);
 
-  // Delete
   const handleDelete = async (code: string) => {
     try {
       await api.delete(`/urls/${code}`);
@@ -56,13 +55,12 @@ const Dashboard = () => {
     }
   };
 
-  // Copy
-  const handleCopy = (code: string, btn: HTMLButtonElement) => {
+  const handleCopy = (code: string) => {
     navigator.clipboard.writeText(
       `${import.meta.env.VITE_BASE_URL?.replace("/api", "")}/${code}`
     );
-    btn.textContent = "✓ Copied";
-    setTimeout(() => (btn.textContent = "📋 Copy"), 1500);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 1500);
   };
 
   if (loading)
@@ -87,9 +85,10 @@ const Dashboard = () => {
           </div>
           <button
             onClick={() => navigate("/")}
-            className="h-[34px] px-4 bg-gray-900 text-white text-[13px] font-medium rounded-lg hover:bg-gray-800 transition-colors cursor-pointer"
+            className="h-[34px] px-4 bg-gray-900 text-white text-[13px] font-medium rounded-lg hover:bg-gray-800 transition-colors cursor-pointer flex items-center gap-1.5"
           >
-            + Shorten new
+            <Plus size={13} />
+            Shorten new
           </button>
         </div>
 
@@ -122,7 +121,9 @@ const Dashboard = () => {
         {/* URL Cards */}
         {urls.length === 0 ? (
           <div className="text-center py-16">
-            <div className="text-3xl mb-3">🔗</div>
+            <div className="flex justify-center mb-3">
+              <Link2 size={32} className="text-gray-300" />
+            </div>
             <p className="text-[15px] font-medium text-gray-900 mb-1">
               No links yet
             </p>
@@ -149,24 +150,38 @@ const Dashboard = () => {
                     </p>
                   </div>
 
+                  {/* Actions */}
                   <div className="flex items-center gap-1.5 flex-shrink-0">
+                    {/* Copy */}
                     <button
-                      onClick={(e) => handleCopy(url.code, e.currentTarget)}
-                      className="h-7 px-2.5 text-[11px] font-medium text-gray-600 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
+                      onClick={() => handleCopy(url.code)}
+                      className="h-7 w-7 flex items-center justify-center text-gray-500 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
+                      title="Copy link"
                     >
-                      📋 Copy
+                      {copiedCode === url.code ? (
+                        <Check size={13} className="text-green-500" />
+                      ) : (
+                        <Copy size={13} />
+                      )}
                     </button>
+
+                    {/* Analytics */}
                     <Link
-                      to= {`/analytics/${url.code}`}
-                      className="h-7 px-2.5 text-[11px] font-medium text-gray-600 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
+                      to={`/analytics/${url.code}`}
+                      className="h-7 px-2.5 flex items-center gap-1.5 text-[11px] font-medium text-gray-600 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
+                      title="View analytics"
                     >
-                      📊 Analytics
+                      <BarChart2 size={12} />
+                      Analytics
                     </Link>
+
+                    {/* Delete */}
                     <button
                       onClick={() => handleDelete(url.code)}
-                      className="h-7 px-2.5 text-[11px] font-medium text-red-400 border border-red-100 rounded-md hover:bg-red-50 transition-colors cursor-pointer"
+                      className="h-7 w-7 flex items-center justify-center text-red-400 border border-red-100 rounded-md hover:bg-red-50 transition-colors cursor-pointer"
+                      title="Delete link"
                     >
-                      🗑 Delete
+                      <Trash2 size={13} />
                     </button>
                   </div>
                 </div>
