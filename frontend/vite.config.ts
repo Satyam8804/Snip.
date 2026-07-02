@@ -7,6 +7,20 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      workbox: {
+        // ✅ API calls — sirf network, cache nahi
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/snip-n2qr\.onrender\.com\/api\/.*/,
+            handler: "NetworkOnly",
+          },
+        ],
+        // ✅ Navigation fallback — SPA ke liye
+        navigateFallback: "index.html",
+        // ✅ Purana SW turant activate ho
+        skipWaiting: true,
+        clientsClaim: true,
+      },
       manifest: {
         name: "Snip – URL Shortener",
         short_name: "Snip",
