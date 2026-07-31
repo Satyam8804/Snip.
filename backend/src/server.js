@@ -45,12 +45,12 @@ app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
 });
 
-setInterval(() => {
-  https
-    .get(`${process.env.BASE_URL}/health`, (res) => {
-      console.log(`Keep alive: ${res.statusCode}`);
-    })
-    .on("error", (err) => {
-      console.error("Keep alive failed:", err.message);
-    });
-}, 14 * 60 * 1000);
+// setInterval(() => {
+//   https
+//     .get(`${process.env.BASE_URL}/health`, (res) => {
+//       console.log(`Keep alive: ${res.statusCode}`);
+//     })
+//     .on("error", (err) => {
+//       console.error("Keep alive failed:", err.message);
+//     });
+// }, 14 * 60 * 1000);
